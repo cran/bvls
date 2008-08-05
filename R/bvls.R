@@ -31,7 +31,7 @@
   sol <- .Fortran("bvls", key = key, m = M, n = N, 
   a = A, b = b, bl = bl, bu = bu, x = X, 
   w=W, act = act, zz = zz, istate = istate, 
-  loopA = loopA, PACKAGE="bvls")
+  loopA = loopA, PACKAGE="bvls", NAOK=TRUE)
 
   fitted <- A %*% sol$x 
   resid <- b - fitted 

@@ -15,9 +15,9 @@ bvls(A, b, bl, bu, key=0, istate=rep(0,ncol(A)+1))
 \arguments{
  \item{A}{numeric matrix with \code{m} rows and \code{n} columns}
  \item{b}{numeric vector of length \code{m} }
- \item{bl}{numeric vector of length \code{m} specifying the lower bound
+ \item{bl}{numeric vector of length \code{n} specifying the lower bound
    on each element of \code{x}}
- \item{bu}{numeric vector of length \code{m} specifying the upper bound
+ \item{bu}{numeric vector of length \code{n} specifying the upper bound
    on each element of \code{x}}
  \item{key}{If \code{key > 0} the routine initializes using the
     user's guess about
@@ -88,34 +88,41 @@ Acolfunc <- function(k, t) exp(-k*t)
 for(i in 1:3) A[,i] <- Acolfunc(k[i],t)
 
 ## simulate a matrix X
-X <- matrix(nrow = 51, ncol = 3) 
-wavenum <- seq(18000,28000, by=200)
+X <- matrix(nrow = 50, ncol = 3) 
+wavenum <- seq(18000,28000, length=nrow(X))
 location <- c(25000, 22000) 
 delta <- c(1000,1000)
 Xcolfunc <- function(wavenum, location, delta)
   exp( - log(2) * (2 * (wavenum - location)/delta)^2)
 for(i in 1:2) X[,i] <- Xcolfunc(wavenum, location[i], delta[i])
 
-X[1:40,3] <- Xcolfunc(wavenum, 23000, 1000)[12:51]
-X[41:51,3]<- - Xcolfunc(wavenum, 23000, 1000)[21:31]
+X[1:40,3] <- Xcolfunc(wavenum, 23000, 1000)[11:nrow(X)]
+X[41:nrow(X),3]<- - Xcolfunc(wavenum, 23000, 1000)[21:30]
 
 ## set seed for reproducibility
 set.seed(3300)
 
 ## simulated data is the product of A and X with some
 ## spherical Gaussian noise added 
-matdat <- A \%*\% t(X) + .01 * rnorm(nrow(A) * nrow(X))
+matdat <- A \%*\% t(X) + .005 * rnorm(nrow(A) * nrow(X))
 
 ## estimate the rows of X using BVLS criteria 
 bvls_sol <- function(matdat, A) {
-  X <- matrix(0, nrow = 51, ncol = 3)
-  bu <- rep(1000,3)
-  bl <- c(0,0,-1000)
+  X <- matrix(0, nrow = ncol(matdat), ncol = ncol(A) )
+  bu <- c(Inf,Inf,.75)
+  bl <- c(0,0,-.75)
   for(i in 1:ncol(matdat)) 
      X[i,] <- coef(bvls(A,matdat[,i], bl, bu))
   X
 }
 X_bvls <- bvls_sol(matdat,A) 
+
+matplot(X,type="p",pch=20)
+matplot(X_bvls,type="l",pch=20,add=TRUE)
+legend(10, -.5,
+c("bound <= zero", "bound <= zero", "bound <= -.75 <= .75"),
+col = c(1,2,3), lty=c(1,2,3),
+text.col = "blue")
 
 \dontrun{ 
 ## can solve the same problem with L-BFGS-B algorithm
@@ -123,9 +130,9 @@ X_bvls <- bvls_sol(matdat,A)
 bfgs_sol <- function(matdat, A) {
   startval <- rep(0, ncol(A))
   fn1 <- function(par1, b, A) sum( ( b - A \%*\% par1)^2)
-  X <- matrix(0, nrow = 51, ncol = 3)
-  bu <- rep(1000,3)
-  bl <- c(0,0,-1000)
+  X <- matrix(0, nrow = ncol(matdat), ncol = 3)
+  bu <- c(1000,1000,.75)
+  bl <- c(0,0,-.75)
   for(i in 1:ncol(matdat))  
     X[i,] <-  optim(startval, fn = fn1, b=matdat[,i], A=A,
                   upper = bu, lower = bl,
@@ -134,7 +141,7 @@ bfgs_sol <- function(matdat, A) {
 }
 X_bfgs <- bfgs_sol(matdat,A) 
 
-## the RMS deviation under NNLS is less than under L-BFGS-B 
+## the RMS deviation under BVLS is less than under L-BFGS-B 
 sqrt(sum((X - X_bvls)^2)) < sqrt(sum((X - X_bfgs)^2))
 
 ## and L-BFGS-B is much slower 

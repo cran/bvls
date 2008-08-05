@@ -177,9 +177,10 @@ c  Check consistency of given bounds  bl, bu.
         bdiff=max(bdiff, bu(j)-bl(j))
         if (bl(j) .gt. bu(j)) then
            return
-C          print *,' Inconsistent bounds in BVLS. '
-C     stop
         endif
+C        print *,' Inconsistent bounds in BVLS. '
+C     stop
+        
  1005 continue
       if (bdiff .eq. 0.0) then
          return
