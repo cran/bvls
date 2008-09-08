@@ -3,9 +3,10 @@
 \docType{package}
 \title{The Stark-Parker algorithm for bounded-variable least squares}
 \description{
-  An R interface to the Stark-Parker algorithm for bounded-variable
+  An R interface to the Stark-Parker implementation of an
+  algorithm for bounded-variable
   least squares that solves 
-  \eqn{A x = b} with the constraint \eqn{l \leq x \leq u} under least
+  \eqn{A x = b} with the constraint \eqn{l \le x \le u} under least
   squares criteria, where
   \eqn{l,x,u \in R^n, b \in R^m}  and \eqn{A} is an
   \eqn{m \times n} matrix.
