@@ -3,9 +3,9 @@
 \title{The Stark-Parker implementation of bounded-variable least squares}
 \description{
    An R interface to the Stark-Parker implementation of bounded-variable
-  least squares that solves 
-  \eqn{A x = b} with the constraint \eqn{l \le x \le u} under least
-  squares criteria, where
+   least squares that solves the least squares problem
+    \eqn{\min{\parallel A x - b \parallel_2}} 
+  with the constraint \eqn{l \le x \le u}, where
   \eqn{l,x,u \in R^n, b \in R^m}  and \eqn{A} is an
   \eqn{m \times n} matrix.
 }
@@ -61,8 +61,6 @@ bvls(A, b, bl, bu, key=0, istate=rep(0,ncol(A)+1))
  Stark PB, Parker RL (1995). Bounded-variable least-squares:
  an algorithm and applications, Computational Statistics, 10, 129-141.
 }
-\author{Katharine M. Mullen <kate@nat.vu.nl> }
-
 \source{
   This is an R interface to the Fortran77 code accompanying the article
   referenced below by Stark PB, Parker RL (1995), and distributed via
@@ -75,7 +73,7 @@ bvls(A, b, bl, bu, key=0, istate=rep(0,ncol(A)+1))
 }
 \seealso{
   the method \code{"L-BFGS-B"} for \link{optim},
-  \link[pkg]{quadprog}, \link[pkg]{nnls}
+  \link[quadprog]{solve.QP}, \link[nnls]{nnls}
 } 
 \examples{
 

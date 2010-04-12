@@ -5,14 +5,13 @@
 \description{
   An R interface to the Stark-Parker implementation of an
   algorithm for bounded-variable
-  least squares that solves 
-  \eqn{A x = b} with the constraint \eqn{l \le x \le u} under least
-  squares criteria, where
+  least squares that solves  \eqn{\min{\parallel A x - b \parallel_2}}
+  with the constraint \eqn{l \le x \le u}, where
   \eqn{l,x,u \in R^n, b \in R^m}  and \eqn{A} is an
   \eqn{m \times n} matrix.
 }
 
-\author{Katharine M. Mullen <kate@nat.vu.nl> }
+
 
 \references{
   Stark PB, Parker RL (1995). Bounded-variable least-squares:
@@ -21,6 +20,6 @@
 
 \keyword{ package }
 \seealso{ \link{bvls}, the method \code{"L-BFGS-B"} for \link{optim},
-  \link[pkg]{quadprog}, \link[pkg]{nnls}
+  \link[quadprog]{solve.QP}, \link[nnls]{nnls}
 } 
 
